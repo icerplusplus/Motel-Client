@@ -1,0 +1,12 @@
+export { WellcomeScreen } from "./Wellcome";
+export { default as HomeScreen } from "./Home";
+export { default as LoginScreen } from "./Login";
+export { default as RegisterScreen } from "./Register";
+export { default as DetailsScreen } from "./Details";
+export { default as OTPVerification } from "./OTPVerification";
+export * from "./Profile";
+export * from "./Search";
+export * from "./Chat";
+export * from "./Category";
+export * from "./Post";
+export * from "./CreatePost";
