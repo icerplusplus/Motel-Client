@@ -7,6 +7,8 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { InputRefProps } from "@/components/shared/Input";
 import { TabParamList } from "@/navigators";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { authService } from "@/services";
 
 interface RegisterProps {}
 
@@ -14,6 +16,16 @@ const RegisterScreen = (props: RegisterProps) => {
   const phoneNumber = React.useRef("");
   const focusInput = React.useRef<InputRefProps | null>(null);
   const navigation = useNavigation<NativeStackNavigationProp<TabParamList>>();
+  const queryClient = useQueryClient()
+
+
+   // Mutations
+   const mutation = useMutation(authService.signup, {
+     onSuccess: () => {
+       // Invalidate and refetch
+       queryClient.invalidateQueries('signup')
+     },
+   })
 
   const redirectToLogin = () => navigation.navigate("Login");
 
@@ -23,16 +35,24 @@ const RegisterScreen = (props: RegisterProps) => {
   };
 
   // OTP Verification handler
-  const otpVerificationHandler = React.useCallback(() => {
+  const otpVerificationHandler = React.useCallback(async () => {
     if (
       phoneNumber.current.length > 0 &&
       phoneNumber.current.length === 10 &&
       Number.isInteger(parseInt(phoneNumber.current))
-    )
+    ) {
+
+      const data = await mutation.mutateAsync(phoneNumber.current)
+      console.log('register: ', data)
+      // input is valid
       navigation.navigate("OTPVerification", {
         phoneNumber: phoneNumber.current,
       });
+    }
+      
   }, [phoneNumber.current]);
+
+  
 
   // Layout effects
   React.useEffect(() => {
